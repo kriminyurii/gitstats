@@ -13,6 +13,7 @@ import (
 
 const (
 	storePathName string = "./.gitstatslocal" //TODO: Такое надо хранить где-то в .env не тут Переделать
+	email         string = "yator0o+github@gmail.com"
 )
 
 func scanFolder(root string) error {
@@ -86,7 +87,7 @@ func parseStoredFileLinesToSlice(filepath string) []string {
 				panic(err)
 			}
 		} else {
-			panic(fmt.Errorf("Reading file error: %v", err))
+			panic(fmt.Errorf("reading file error: %v", err))
 		}
 	}
 	defer file.Close()
@@ -98,7 +99,7 @@ func parseStoredFileLinesToSlice(filepath string) []string {
 	}
 	if err := scanner.Err(); err != nil {
 		if err != io.EOF {
-			panic(fmt.Errorf("Reading file error: %v", err))
+			panic(fmt.Errorf("reading file error: %v", err))
 		}
 	}
 	return lines
@@ -109,5 +110,6 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	proccessRepos(email)
 	os.Exit(0)
 }
