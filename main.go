@@ -12,8 +12,9 @@ import (
 )
 
 const (
-	storePathName string = "./.gitstatslocal" //TODO: Такое надо хранить где-то в .env не тут Переделать
-	email         string = "yator0o+github@gmail.com"
+	storePathName       string = "./.gitstatslocal" //TODO: Такое надо хранить где-то в .env не тут Переделать
+	email               string = "yator0o+github@gmail.com"
+	daysInLastSixMonths        = 183
 )
 
 func scanFolder(root string) error {

@@ -59,7 +59,7 @@ func fillRepoInfo(repoPath, email string, commits map[time.Time]int) (map[time.T
 
 func filterCommitByDate(commits map[time.Time]int) map[time.Time]int {
 	filteredCommits := make(map[time.Time]int)
-	halfYearAgo := time.Now().AddDate(0, -6, 0) // Улучшить, чтобы можно было передавать различный duration
+	halfYearAgo := time.Now().AddDate(0, 0, -daysInLastSixMonths)
 
 	for commitDate, count := range commits {
 		if commitDate.After(halfYearAgo) {
