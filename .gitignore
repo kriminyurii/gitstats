@@ -1,0 +1,22 @@
+/bin/
+/obj/
+*.o
+*.a
+
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# /vendor/
+
+.gitstatslocal
+gitstats
+
+.DS_Store
+
+.env
+
+go.work
+go.work.sum
