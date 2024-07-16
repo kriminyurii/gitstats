@@ -9,17 +9,23 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
+
+	"github.com/joho/godotenv"
 )
 
 const (
-	storePathName       string = "./.gitstatslocal" //TODO: Такое надо хранить где-то в .env не тут Переделать
 	email               string = "yator0o+github@gmail.com"
-	daysInLastSixMonths        = 183
+	daysInLastSixMonths int    = 183
 )
 
 func scanFolder(root string) error {
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file", err)
+	}
+	storePathName := os.Getenv("storePathName")
 	var pathNames []string
-	err := filepath.WalkDir(root, func(path string, d fs.DirEntry, err error) error {
+	err = filepath.WalkDir(root, func(path string, d fs.DirEntry, err error) error {
 		if err != nil {
 			return err
 		}
@@ -54,6 +60,11 @@ func joinNewReposToSlice(newRepos []string, existingRepos []string) []string {
 }
 
 func dumbSliceToTheStoredFile(pathnames []string) {
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file", err)
+	}
+	storePathName := os.Getenv("storePathName")
 	file, err := os.Create(storePathName)
 	if err != nil {
 		log.Fatal(err)

@@ -3,15 +3,21 @@ package main
 import (
 	"fmt"
 	"log"
+	"os"
 	"time"
 
 	git "github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/plumbing/object"
+	"github.com/joho/godotenv"
 )
 
 func proccessRepos(email string) map[time.Time]int {
 	const REFERENCE_NOT_FOUND_ERROR string = "reference not found"
-
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file", err)
+	}
+	storePathName := os.Getenv("storePathName")
 	repos := parseStoredFileLinesToSlice(storePathName)
 	commits := make(map[time.Time]int)
 	for _, repo := range repos {
