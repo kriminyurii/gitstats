@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"flag"
 	"fmt"
 	"io"
 	"io/fs"
@@ -14,9 +15,17 @@ import (
 )
 
 const (
-	email               string = "yator0o+github@gmail.com"
-	daysInLastSixMonths int    = 183
+	daysInLastSixMonths int = 183
 )
+
+var (
+	email string
+)
+
+func init() {
+	flag.StringVar(&email, "email", "", "email flag for search through git local repos")
+	flag.Parse()
+}
 
 func scanFolder(root string) error {
 	err := godotenv.Load()
