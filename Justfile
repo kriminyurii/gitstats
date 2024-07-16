@@ -1,7 +1,8 @@
 build:
-  go build -o gitstats
+  go build -o gitstats 
 
-run:
-  ./gitstats
+run *flags="":
+  ./gitstats {{flags}}
 
-build-and-run: build run
+build-and-run *flags="": build
+  ./gitstats {{flags}}
