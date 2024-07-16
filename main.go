@@ -43,8 +43,10 @@ func addGitPathToTheStore(pathname string, newRepos []string) {
 }
 
 func joinNewReposToSlice(newRepos []string, existingRepos []string) []string {
-	for _, v := range newRepos {
-		if !contains(existingRepos, v) {
+	for i, v := range existingRepos {
+		if contains(existingRepos, v) && !contains(newRepos, v) {
+			existingRepos = append(existingRepos[:i], existingRepos[i+1:]...)
+		} else if !contains(newRepos, v) {
 			existingRepos = append(existingRepos, v)
 		}
 	}
