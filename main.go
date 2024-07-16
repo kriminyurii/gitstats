@@ -113,6 +113,6 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	proccessRepos(email)
+	Render()
 	os.Exit(0)
 }

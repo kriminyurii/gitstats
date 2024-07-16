@@ -9,7 +9,7 @@ import (
 	"github.com/go-git/go-git/v5/plumbing/object"
 )
 
-func proccessRepos(email string) {
+func proccessRepos(email string) map[time.Time]int {
 	const REFERENCE_NOT_FOUND_ERROR string = "reference not found"
 
 	repos := parseStoredFileLinesToSlice(storePathName)
@@ -26,7 +26,7 @@ func proccessRepos(email string) {
 		commits = c
 	}
 	commits = filterCommitByDate(commits)
-	fmt.Println(commits, "commits")
+	return commits
 }
 
 func fillRepoInfo(repoPath, email string, commits map[time.Time]int) (map[time.Time]int, error) {
