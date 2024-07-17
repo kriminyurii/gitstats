@@ -60,14 +60,25 @@ func addGitPathToTheStore(pathname string, newRepos []string) {
 }
 
 func joinNewReposToSlice(newRepos []string, existingRepos []string) []string {
-	for i, v := range existingRepos {
-		if contains(existingRepos, v) && !contains(newRepos, v) {
-			existingRepos = append(existingRepos[:i], existingRepos[i+1:]...)
-		} else if !contains(newRepos, v) {
+	for _, v := range newRepos {
+		if !contains(existingRepos, v) {
 			existingRepos = append(existingRepos, v)
 		}
 	}
+	existingRepos = filter(existingRepos, func(repo string) bool {
+		return contains(newRepos, repo)
+	})
 	return existingRepos
+}
+
+func filter[T any](slice []T, predicate func(a T) bool) []T {
+	var result []T
+	for _, v := range slice {
+		if predicate(v) {
+			result = append(result, v)
+		}
+	}
+	return result
 }
 
 func dumbSliceToTheStoredFile(pathnames []string) {
