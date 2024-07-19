@@ -56,9 +56,23 @@ func fillRepoInfo(repoPath, email string, commits map[time.Time]int) (map[time.T
 	return commits, nil
 }
 
+func GetLastHalfYear() time.Time {
+	return time.Now().AddDate(0, 0, -daysInLastSixMonths)
+}
+
+func GetLastHalfYearInMonths() []string {
+	sixMonthsAgo := GetLastHalfYear().AddDate(0, 0, -time.Now().Day()+1)
+
+	var lastSixMonths []string
+	for month := sixMonthsAgo; month.Before(time.Now()); month = month.AddDate(0, 1, 0) {
+		lastSixMonths = append(lastSixMonths, month.Format("Jan"))
+	}
+	return lastSixMonths
+}
+
 func filterCommitByDate(commits map[time.Time]int) map[time.Time]int {
 	filteredCommits := make(map[time.Time]int)
-	halfYearAgo := time.Now().AddDate(0, 0, -daysInLastSixMonths)
+	halfYearAgo := GetLastHalfYear()
 
 	for commitDate, count := range commits {
 		if commitDate.After(halfYearAgo) {
