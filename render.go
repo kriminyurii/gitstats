@@ -9,7 +9,7 @@ import (
 )
 
 type model struct {
-	commits map[time.Time]int
+	commits map[time.Time]Offset
 }
 
 func initialModel() model {
