@@ -28,7 +28,7 @@ func init() {
 	if err != nil {
 		log.Fatal("Error loading .env file", err)
 	}
-	storePathName = os.Getenv("storePathName")
+	storePathName = os.Getenv("STORE_PATH_NAME")
 
 	flag.StringVar(&email, "email", "", "email flag for search through git local repos")
 	flag.Parse()
