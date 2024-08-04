@@ -52,12 +52,12 @@ func fillRepoInfo(repoPath, email string, commits map[time.Time]Offset) (map[tim
 			return nil
 		} else {
 			date := c.Author.When.Truncate(24 * time.Hour)
-			offset := Offset{0, 0, 0}
+			offset := Offset{0, 0, 1}
+			offset.Row = getRowOffset(date)
+			offset.WeekDay = getDayOffset(date)
 			if prevOffset, ok := commits[date]; ok {
 				offset.Commits = prevOffset.Commits + 1
 			}
-			offset.Row = getRowOffset(date)
-			offset.WeekDay = getDayOffset(date)
 			commits[date] = offset
 		}
 		return nil
@@ -76,12 +76,10 @@ func getRowOffset(date time.Time) int {
 	sixMonthsAgo := GetLastHalfYear().AddDate(0, 0, -time.Now().Day()+1)
 	const daysInWeek int = 7
 	const hoursInDay int = 24
-	if date.Before(sixMonthsAgo) {
-		return -1
-	}
-	durationSince := date.Sub(sixMonthsAgo)
-	daysSinceSixMonthsAgo := int(durationSince.Hours() / float64(hoursInDay))
-	return daysSinceSixMonthsAgo / daysInWeek
+	durationSinceSixMonthsAgo := date.Sub(sixMonthsAgo)
+	daysSinceSixMonthsAgo := int(durationSinceSixMonthsAgo.Hours()) / hoursInDay
+
+	return (daysSinceSixMonthsAgo / daysInWeek) - 1
 }
 
 func GetLastHalfYear() time.Time {
