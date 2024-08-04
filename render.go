@@ -36,6 +36,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 type Styles struct {
 	Cell           lipgloss.Style
+	Empty          lipgloss.Style
 	MonthsRow      lipgloss.Style
 	Month          lipgloss.Style
 	Row            lipgloss.Style
@@ -53,6 +54,7 @@ func DefaultStyles() *Styles {
 		PaddingRight(1).
 		PaddingLeft(1).
 		Background(lipgloss.Color("#FFFFFF"))
+	s.Empty = s.Cell.Width(3).Background(lipgloss.Color("#6F7573"))
 	s.Row = lipgloss.NewStyle().MarginBottom(1)
 	s.RowStartIndent = 4
 	s.MonthsIndent = 13
@@ -61,7 +63,7 @@ func DefaultStyles() *Styles {
 }
 
 func getCellValue(weekdayIndex, rowIndex int, model model) string {
-	commitsCount := "0"
+	commitsCount := ""
 	for _, offset := range model.commits {
 		if weekdayIndex == offset.WeekDay && rowIndex == offset.Row {
 			commitsCount = strconv.Itoa(offset.Commits)
@@ -84,6 +86,14 @@ func RenderMonthsRow() string {
 	return styles.MonthsRow.MarginLeft(styles.RowStartIndent).Render(monthsRow)
 }
 
+func renderCell(styles *Styles, cellValue string) lipgloss.Style {
+	cell := styles.Empty
+	if cellValue != "" {
+		cell = styles.Cell.SetString(cellValue)
+	}
+	return cell
+}
+
 func RenderGrid(model model) string {
 	var renderString string = ""
 	styles := DefaultStyles()
@@ -95,16 +105,16 @@ func RenderGrid(model model) string {
 		row := ""
 		cellValue := getCellValue(i, 0, model)
 		if i%2 != 0 {
-			row = lipgloss.JoinHorizontal(lipgloss.Center, day, styles.Cell.MarginLeft(1).Render(cellValue))
+			row = lipgloss.JoinHorizontal(lipgloss.Center, day, renderCell(styles, cellValue).MarginLeft(1).Render())
 			for j := 1; j < weeksInMonth*monthsCount; j++ {
 				cellValue = getCellValue(i, j, model)
-				row += lipgloss.JoinHorizontal(lipgloss.Center, styles.Cell.MarginLeft(1).Render(cellValue))
+				row += lipgloss.JoinHorizontal(lipgloss.Center, renderCell(styles, cellValue).MarginLeft(1).Render())
 			}
 		} else if i%2 == 0 {
-			row = styles.Cell.MarginLeft(styles.RowStartIndent).Render(cellValue)
+			row = renderCell(styles, cellValue).MarginLeft(styles.RowStartIndent).Render()
 			for j := 1; j < weeksInMonth*monthsCount; j++ {
 				cellValue = getCellValue(i, j, model)
-				row += lipgloss.JoinHorizontal(lipgloss.Center, styles.Cell.MarginLeft(1).Render(cellValue))
+				row += lipgloss.JoinHorizontal(lipgloss.Center, renderCell(styles, cellValue).MarginLeft(1).Render())
 			}
 		}
 		renderString += styles.Row.Render(row)
