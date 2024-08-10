@@ -58,8 +58,10 @@ type Styles struct {
 	MonthsRow      lipgloss.Style
 	Month          lipgloss.Style
 	Row            lipgloss.Style
+	Info           lipgloss.Style
 	RowStartIndent int
 	MonthsIndent   int
+	InfoIndent     int
 }
 
 func DefaultStyles() *Styles {
@@ -75,6 +77,11 @@ func DefaultStyles() *Styles {
 	s.Row = lipgloss.NewStyle().MarginBottom(1)
 	s.RowStartIndent = 4
 	s.MonthsIndent = 13
+	monthsCount := len(GetLastHalfYearInMonths())
+	infoWordsIndent := 8
+	infoIndent := s.RowStartIndent + s.MonthsIndent*monthsCount - 1 - infoWordsIndent
+	s.InfoIndent = infoIndent
+	s.Info = lipgloss.NewStyle().MarginLeft(s.InfoIndent).Bold(true)
 
 	return s
 }
@@ -134,9 +141,23 @@ func RenderGrid(model model) string {
 			}
 		}
 		renderString += styles.Row.Render(row)
+
 		renderString += "\n"
+
 	}
 	return renderString
+}
+
+func RenderCommitsLevelInfo() string {
+	styles := DefaultStyles()
+	infoRow := styles.Info
+	info := ""
+	info += lipgloss.JoinHorizontal(lipgloss.Center, "Less")
+	for _, level := range commitsLevels {
+		info += lipgloss.JoinHorizontal(lipgloss.Center, renderCell(styles, level.threshold).MarginLeft(1).Render())
+	}
+	info += lipgloss.JoinHorizontal(lipgloss.Center, lipgloss.NewStyle().MarginLeft(1).SetString("More").Render())
+	return infoRow.Render(info)
 }
 
 func (m model) View() string {
@@ -144,6 +165,7 @@ func (m model) View() string {
 	s += RenderMonthsRow()
 	s += "\n"
 	s += RenderGrid(m)
+	s += RenderCommitsLevelInfo()
 	return s
 }
 
