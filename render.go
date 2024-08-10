@@ -2,7 +2,6 @@ package main
 
 import (
 	"log"
-	"strconv"
 	"time"
 
 	tea "github.com/charmbracelet/bubbletea"
@@ -34,9 +33,28 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	return m, nil
 }
 
+var commitsLevels = []struct {
+	threshold int
+	color     string
+}{
+	{0, "#6F7573"}, // No contributions
+	{1, "#C6E48B"},
+	{5, "#7BC96F"},
+	{10, "#239A3B"},
+	{20, "#196127"},
+}
+
+func getColor(commits int) string {
+	for _, level := range commitsLevels {
+		if commits <= level.threshold {
+			return level.color
+		}
+	}
+	return commitsLevels[len(commitsLevels)-1].color
+}
+
 type Styles struct {
 	Cell           lipgloss.Style
-	Empty          lipgloss.Style
 	MonthsRow      lipgloss.Style
 	Month          lipgloss.Style
 	Row            lipgloss.Style
@@ -49,12 +67,11 @@ func DefaultStyles() *Styles {
 	s.MonthsRow = lipgloss.NewStyle().MarginTop(1).MarginBottom(1)
 	s.Month = lipgloss.NewStyle().Bold(true)
 	s.Cell = lipgloss.NewStyle().
-		Width(1).
+		Width(3).
 		Height(1).
 		PaddingRight(1).
 		PaddingLeft(1).
 		Background(lipgloss.Color("#FFFFFF"))
-	s.Empty = s.Cell.Width(3).Background(lipgloss.Color("#6F7573"))
 	s.Row = lipgloss.NewStyle().MarginBottom(1)
 	s.RowStartIndent = 4
 	s.MonthsIndent = 13
@@ -62,11 +79,11 @@ func DefaultStyles() *Styles {
 	return s
 }
 
-func getCellValue(weekdayIndex, rowIndex int, model model) string {
-	commitsCount := ""
+func getCellValue(weekdayIndex, rowIndex int, model model) int {
+	var commitsCount int
 	for _, offset := range model.commits {
 		if weekdayIndex == offset.WeekDay && rowIndex == offset.Row {
-			commitsCount = strconv.Itoa(offset.Commits)
+			commitsCount = offset.Commits
 		}
 	}
 	return commitsCount
@@ -86,11 +103,10 @@ func RenderMonthsRow() string {
 	return styles.MonthsRow.MarginLeft(styles.RowStartIndent).Render(monthsRow)
 }
 
-func renderCell(styles *Styles, cellValue string) lipgloss.Style {
-	cell := styles.Empty
-	if cellValue != "" {
-		cell = styles.Cell.SetString(cellValue)
-	}
+func renderCell(styles *Styles, cellValue int) lipgloss.Style {
+	cell := styles.Cell
+	color := getColor(cellValue)
+	cell = cell.Background(lipgloss.Color(color))
 	return cell
 }
 
@@ -128,7 +144,6 @@ func (m model) View() string {
 	s += RenderMonthsRow()
 	s += "\n"
 	s += RenderGrid(m)
-	s += "\n"
 	return s
 }
 
