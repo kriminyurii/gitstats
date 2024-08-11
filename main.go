@@ -10,8 +10,6 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
-
-	"github.com/joho/godotenv"
 )
 
 const (
@@ -20,17 +18,15 @@ const (
 
 var (
 	email         string
+	folder        string
 	storePathName string
 )
 
 func init() {
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Error loading .env file", err)
-	}
-	storePathName = os.Getenv("STORE_PATH_NAME")
+	storePathName = ".gitstatslocal"
 
 	flag.StringVar(&email, "email", "", "email flag for search through git local repos")
+	flag.StringVar(&folder, "folder_path", "", "add a new folder to can for git repos")
 	flag.Parse()
 }
 
@@ -137,7 +133,7 @@ func parseStoredFileLinesToSlice(filepath string) []string {
 }
 
 func main() {
-	err := scanFolder("../")
+	err := scanFolder(folder)
 	if err != nil {
 		log.Fatal(err)
 	}
