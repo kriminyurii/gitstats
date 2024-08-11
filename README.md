@@ -2,6 +2,8 @@
 
 ## Show your local git stats
 
+### Just for fun and study purposes
+
 ### Usage
 
 ```
