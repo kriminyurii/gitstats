@@ -166,6 +166,8 @@ func (m model) View() string {
 	s += "\n"
 	s += RenderGrid(m)
 	s += RenderCommitsLevelInfo()
+	s += "\n"
+	s += "Press q, ESC or Ctrl + c to quit"
 	return s
 }
 
